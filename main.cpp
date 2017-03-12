@@ -52,4 +52,23 @@ void testLoad(){
     
     cout<<g.latitudeText<<","<<g.longitudeText<<endl;
     
+    GeoCoord q("3.45", "6.45");
+    
+    
+    SegmentMapper sm;
+    
+    sm.init(m);
+    
+    vector<StreetSegment> v = sm.getSegments(g);
+    
+    for (int i = 0; i<v.size(); i++){
+        cout<<v[i].streetName<<endl;
+        for (int j = 0; j<v[i].attractions.size(); j++){
+            cout<<v[i].attractions[j].name<<endl;
+        }
+    }
+    
+    
+    
+    
 }

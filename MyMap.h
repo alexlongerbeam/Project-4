@@ -6,6 +6,9 @@
 #ifndef MAP_INCLUDED
 #define MAP_INCLUDED
 
+#include "support.h"
+#include <iostream>
+
 template<typename KeyType, typename ValueType>
 class MyMap
 {
@@ -29,7 +32,7 @@ public:
     // associated with that key is replaced by the second parameter (value). // Thus, the tree contains no duplicate keys.
     void associate(const KeyType& key, const ValueType& value){
         if (m_size==0){
-            root = newNode(key, value);
+            root = new Node(key, value);
             m_size++;
             return;
         }
@@ -44,7 +47,7 @@ public:
                 if (curr->left!=nullptr)
                     curr = curr->left;
                 else{
-                    curr->left = newNode(key, value);
+                    curr->left = new Node(key, value);
                     m_size++;
                     break;
                 }
@@ -54,7 +57,7 @@ public:
                 if (curr->right!=nullptr)
                     curr = curr->right;
                 else{
-                    curr->right = newNode(key, value);
+                    curr->right = new Node(key, value);
                     m_size++;
                     break;
                 }
@@ -91,6 +94,11 @@ public:
 
 private:
     struct Node{
+        
+        Node(KeyType k, ValueType v): key(k), value(v){
+            left = nullptr;
+            right = nullptr;
+        }
         KeyType key;
         ValueType value;
         Node* left;
@@ -101,21 +109,14 @@ private:
     
     int m_size;
     
-    Node* newNode(const KeyType& key, const ValueType& value){
-        Node* n = new Node;
-        n->key = key;
-        n->value = value;
-        n->left = nullptr;
-        n->right = nullptr;
-        
-        return n;
-    }
+    
         
     void recClear(Node* n){
         if (n==nullptr)
             return;
         recClear(n->left);
         recClear(n->right);
+        
         
         delete n;
     }
