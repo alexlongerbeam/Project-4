@@ -17,8 +17,18 @@ bool operator==(const GeoCoord& lhs, const GeoCoord& rhs){
 }
 
 inline
+bool operator==(const StreetSegment& lhs, const StreetSegment& rhs){
+    return lhs.segment.start==rhs.segment.start && lhs.segment.end == rhs.segment.end;
+}
+
+inline
 bool operator<(const GeoCoord& lhs, const GeoCoord& rhs){
     return lhs.latitude<rhs.latitude;
+}
+
+inline
+bool operator<(const StreetSegment& lhs, const StreetSegment& rhs){
+    return lhs.segment.start<rhs.segment.start;
 }
 
 

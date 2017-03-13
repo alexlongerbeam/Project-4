@@ -98,7 +98,7 @@ bool MapLoaderImpl::load(string mapFile)
     }
     
     
-    cerr<<segments.size()<<endl;
+    //cerr<<segments.size()<<endl;
 	return true;
 }
 

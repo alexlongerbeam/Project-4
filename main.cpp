@@ -9,10 +9,14 @@ using namespace std;
 
 void foo();
 void testLoad();
+void testAttr();
+void finalTest();
 int main()
 {
     //foo();
-    testLoad();
+    //testLoad();
+    //testAttr();
+    finalTest();
 }
 
 
@@ -71,4 +75,42 @@ void testLoad(){
     
     
     
+}
+
+void testAttr(){
+    MapLoader m;
+    
+    if (m.load("/Users/alexlongerbeam/Desktop/mapdata.txt"))
+        cout<<"Good "<<m.getNumSegments()<<endl;
+    else
+        cout<<"problem "<<m.getNumSegments()<<endl;
+    
+    AttractionMapper am;
+    
+    am.init(m);
+    GeoCoord g;
+    string att;
+    cout<<"Attraction: ";
+    getline(cin, att);
+    
+    am.getGeoCoord(att, g);
+    
+    SegmentMapper sm;
+    
+    sm.init(m);
+    
+    vector<StreetSegment> v = sm.getSegments(g);
+    
+    cout<<"Size: "<<v.size()<<endl;
+}
+
+
+void finalTest(){
+    Navigator n;
+    
+    n.loadMapData("/Users/alexlongerbeam/Desktop/mapdata.txt");
+    
+    vector<NavSegment> d;
+    
+    n.navigate("Rieber Hall", "Brunello Cucinelli", d);
 }
