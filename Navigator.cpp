@@ -96,18 +96,22 @@ NavigatorImpl::NavigatorImpl()
 
 NavigatorImpl::~NavigatorImpl()
 {
-    
+    cerr<<nMap->size()<<endl;
     
     int num = loader->getNumSegments();
     
     StreetSegment s;
     Node **n;
+    int deleted = 0;
     for (int i = 0; i<num; i++){
         loader->getSegment(i, s);
         n = nMap->find(s);
-        if (n!=nullptr)
+        if (n!=nullptr){
             delete *n;
+            deleted++;
+        }
     }
+    cerr<<deleted<<endl;
     
     delete loader;
     delete aMap;
@@ -170,7 +174,7 @@ NavResult NavigatorImpl::navigate(string start, string end, vector<NavSegment> &
     //check segments at end of first segment
     segs = sMap->getSegments(beginningSeg.segment.end);
     for (int i = 0; i<segs.size(); i++){
-        if (!(segs[i]==endSeg)){
+        if (!(segs[i]==beginningSeg)){
             Node * n = new Node(segs[i], first, false, false);
             nMap->associate(segs[i], n);
             n->g = initLengthToEnd;

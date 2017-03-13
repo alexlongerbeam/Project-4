@@ -112,5 +112,5 @@ void finalTest(){
     
     vector<NavSegment> d;
     
-    n.navigate("Rieber Hall", "Brunello Cucinelli", d);
+    n.navigate("Rieber Hall", "Robertson Playground", d);
 }

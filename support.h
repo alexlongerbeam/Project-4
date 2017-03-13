@@ -13,7 +13,7 @@
 
 inline
 bool operator==(const GeoCoord& lhs, const GeoCoord& rhs){
-    return lhs.latitude==rhs.latitude && lhs.longitude == rhs.longitude;
+    return lhs.latitudeText==rhs.latitudeText && lhs.longitudeText == rhs.longitudeText;
 }
 
 inline

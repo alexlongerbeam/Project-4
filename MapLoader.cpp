@@ -49,7 +49,7 @@ bool MapLoaderImpl::load(string mapFile)
     
     while (getline(infile, street)){
         if (street == ""){
-            cerr<<segments.size()<<endl;
+            //cerr<<segments.size()<<endl;
             return true;
         }
         
