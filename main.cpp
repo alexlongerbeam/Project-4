@@ -112,5 +112,9 @@ void finalTest(){
     
     vector<NavSegment> d;
     
-    n.navigate("Rieber Hall", "Robertson Playground", d);
+    n.navigate("Rieber Hall", "Sigma Nu Fraternity", d);
+    
+    for (int i = 0; i<d.size(); i++){
+        cerr<<d[i].m_distance<<" mi "<<d[i].m_direction<<" on "<<d[i].m_streetName<<endl;
+    }
 }
