@@ -4,6 +4,7 @@
 #include <queue>
 #include <stack>
 #include "MyMap.h"
+#include "support.h"
 using namespace std;
 
 
@@ -101,7 +102,7 @@ NavigatorImpl::NavigatorImpl()
 
 NavigatorImpl::~NavigatorImpl()
 {
-    cerr<<nMap->size()<<endl;
+    //cerr<<nMap->size()<<endl;
     
     int num = loader->getNumSegments();
     
@@ -116,7 +117,7 @@ NavigatorImpl::~NavigatorImpl()
             deleted++;
         }
     }
-    cerr<<deleted<<endl;
+    //cerr<<deleted<<endl;
     
     delete loader;
     delete aMap;
@@ -138,6 +139,9 @@ bool NavigatorImpl::loadMapData(string mapFile)
 
 NavResult NavigatorImpl::navigate(string start, string end, vector<NavSegment> &directions) const
 {
+    
+    start = toLower(start);
+    end = toLower(end);
     GeoCoord startCoord;
     GeoCoord endCoord;
     
@@ -146,23 +150,56 @@ NavResult NavigatorImpl::navigate(string start, string end, vector<NavSegment> &
     if (!aMap->getGeoCoord(end, endCoord))
         return NAV_BAD_DESTINATION;
     
-    
+    StreetSegment beginningSeg;
     vector<StreetSegment> segs = sMap->getSegments(startCoord);
-    StreetSegment beginningSeg = segs[0];
-    segs = sMap->getSegments(endCoord);
-    StreetSegment endSeg = segs[0];
+    if (segs.size()>1){
+        for (int i = 0; i<segs.size(); i++){
+            for (int j = 0; j<segs[i].attractions.size(); j++){
+                if (startCoord==segs[i].attractions[j].geocoordinates)
+                    beginningSeg = segs[i];
+                
+            }
+        }
+    }
+    else{
+    beginningSeg = segs[0];
+    }
     
-    if (beginningSeg==endSeg)
+    segs = sMap->getSegments(endCoord);
+    StreetSegment endSeg;
+    if (segs.size()>1){
+        for (int i = 0; i<segs.size(); i++){
+            for (int j = 0; j<segs[i].attractions.size(); j++){
+                if (startCoord==segs[i].attractions[j].geocoordinates)
+                    endSeg = segs[i];
+                
+            }
+        }
+    }
+    else{
+        endSeg = segs[0];
+    }
+    
+    
+    
+    if (beginningSeg==endSeg){
+        double dist = distanceEarthMiles(startCoord, endCoord);
+        GeoSegment s(startCoord, endCoord);
+        string dir = getDirection(s);
+        NavSegment n(dir, beginningSeg.streetName, dist, s);
+        directions.push_back(n);
         return NAV_SUCCESS;
+    }
     
     //Create initial node
     Node * first = new Node(beginningSeg);
     nMap->associate(beginningSeg, first);
     
     //Find all possibilities for first next segment
+    GeoCoord g = beginningSeg.segment.start;
     
-    int initLengthToStart = distanceEarthMiles(startCoord, beginningSeg.segment.start);
-    int initLengthToEnd = distanceEarthMiles(startCoord, beginningSeg.segment.end);
+    double initLengthToStart = distanceEarthMiles(startCoord, beginningSeg.segment.start);
+    double initLengthToEnd = distanceEarthMiles(startCoord, beginningSeg.segment.end);
     
     //Check segments at start of first segment
     segs = sMap->getSegments(beginningSeg.segment.start);
@@ -309,6 +346,10 @@ NavResult NavigatorImpl::navigate(string start, string end, vector<NavSegment> &
     while (!dirStack.empty()){
         iter = dirStack.top();
         dirStack.pop();
+        if (iter->seg==endSeg){
+            directions.push_back(makeLast(iter, endCoord));
+            return NAV_SUCCESS;
+        }
         if (iter->seg.streetName==currSt)
             directions.push_back(makeProceed(iter));
         else{
@@ -324,35 +365,13 @@ NavResult NavigatorImpl::navigate(string start, string end, vector<NavSegment> &
                 directions.push_back(makeProceed(iter));
             }
         }
-        int i = directions.size()-1;
-        cerr<<directions[i].m_distance<<" mi "<<directions[i].m_direction<<" on "<<directions[i].m_streetName<<endl;
+
     }
     
     
     cerr<<"Problem NavSegging"<<endl;
     
-    //FOR NOW print out length and street from curr back
-//    Node * iter = current;
-//    double kmTotal=0;
-//    string curSt = iter->seg.streetName;
-//    double totaltotal = 0;
-//    while (iter!=nullptr){
-//        if (iter->seg.streetName==curSt){
-//            kmTotal+=iter->length;
-//            totaltotal+=iter->length;
-//        }
-//        else{
-//            cerr<<kmTotal<<" km on "<<curSt<<endl;
-//            kmTotal=iter->length;
-//            curSt = iter->seg.streetName;
-//        }
-//        //cerr<<iter->length<<" km on "<<iter->seg.streetName<<endl;
-//        iter = iter->parent;
-//    }
-//    cerr<<kmTotal<<" km on "<<curSt<<endl;
-//    
-//    cerr<<"TOTAL: "<<totaltotal<<" km"<<endl;
-//    cerr<<endl<<endl;
+    
     
     cerr<<"MAKE ATTRACTIONS CASE INSENSITIVE"<<endl;
     cerr<<"CHECK COURSE WEBSITE FOR UPDATED NAVSEGMENT"<<endl;
@@ -417,7 +436,7 @@ NavSegment NavigatorImpl::makeLast(Node* n, GeoCoord& end) const{
     if (n->startStart)
         start = n->seg.segment.start;
     else
-        start = n->seg.segment.start;
+        start = n->seg.segment.end;
     
     double dist = distanceEarthMiles(start, end);
     GeoSegment s(start, end);

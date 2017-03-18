@@ -10,6 +10,8 @@
 #define support_h
 
 #include "provided.h"
+#include <string>
+#include <cctype>
 
 inline
 bool operator==(const GeoCoord& lhs, const GeoCoord& rhs){
@@ -32,6 +34,15 @@ bool operator<(const StreetSegment& lhs, const StreetSegment& rhs){
 }
 
 
+inline
+std::string toLower(std::string original){
+    std::string result = "";
+    
+    for (int i = 0; i<original.size(); i++){
+        result += tolower(original[i]);
+    }
+    return result;
+}
 
 
 

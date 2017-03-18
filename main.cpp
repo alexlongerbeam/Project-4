@@ -17,6 +17,7 @@ int main()
     //testLoad();
     //testAttr();
     finalTest();
+    //cerr<<"MAKE ATTRACTIONS CASE INSENSITIVE"<<endl;
 }
 
 
@@ -112,7 +113,8 @@ void finalTest(){
     
     vector<NavSegment> d;
     
-    n.navigate("Rieber Hall", "Sigma Nu Fraternity", d);
+    n.navigate("Barney's Beanery", "WEst alumni center", d);
+    
     
     for (int i = 0; i<d.size(); i++){
         cerr<<d[i].m_distance<<" mi "<<d[i].m_direction<<" on "<<d[i].m_streetName<<endl;

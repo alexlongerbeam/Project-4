@@ -1,6 +1,8 @@
 #include "provided.h"
 #include "MyMap.h"
+#include "support.h"
 #include <string>
+
 using namespace std;
 
 class AttractionMapperImpl
@@ -34,7 +36,8 @@ void AttractionMapperImpl::init(const MapLoader& ml)
         //go through attractions
         for (int j = 0; j<attr.size(); j++){
             Attraction a = attr[j];
-            map.associate(a.name, a.geocoordinates);
+            //make attraction name lowercase
+            map.associate(toLower(a.name), a.geocoordinates);
         }
     }
     
@@ -42,12 +45,15 @@ void AttractionMapperImpl::init(const MapLoader& ml)
 
 bool AttractionMapperImpl::getGeoCoord(string attraction, GeoCoord& gc) const
 {
-    const GeoCoord* gp = map.find(attraction);
+    
+    const GeoCoord* gp = map.find(toLower(attraction));
     if (gp==nullptr)
         return false;
     gc = *gp;
     return true;
 }
+
+
 
 //******************** AttractionMapper functions *****************************
 
